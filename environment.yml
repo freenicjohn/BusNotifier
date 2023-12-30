@@ -1,0 +1,6 @@
+name: BusNotifier
+channels:
+  - defaults
+prefix: /Users/njohn/anaconda3/envs/BusNotifier
+dependencies:
+  - urllib3<2
