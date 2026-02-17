@@ -1,19 +1,27 @@
 # BusNotifier
-Posts upcoming bus times in a Slack channel
+Posts upcoming bus times to Slack
 
-## Deploy Lambda
-1) Zip all py files with
-```
-zip result.zip *.py
-```
-2) Upload the zipped file via the aws console
-3) Layers hold dependency libs and only need to be uploaded if changed
+## Requirements
+- Python 3.8+
+- Slack API token
+- OpenAI API key (or other LLM provider)
 
+## Installation
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/yourusername/tldr-slack.git
+   cd tldr-slack
+   ```
+2. Install dependencies:
+   ```sh
+   uv sync
+   ```
 
-## Run locally
-```
-python notify.py
-```
-
-## Secrets
-Secrets contain user-specific information needed to hit the CTA's public API and other configuration parameters. I'm using another private repo to hold these secrets. On aws, they should be entered as environment variables. Locally, they can be stored at the path shown in the ```load_secrets()``` method.
+## Usage
+1. Set your environment variables:
+   - `TLDR_SLACK_WEBHOOK`
+   - `OPENAI_API_KEY`
+2. Run notifier:
+   ```sh
+   uv run --env-file=../.env main.py
+   ```

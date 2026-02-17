@@ -1,8 +1,8 @@
 import os
-import json
 import requests
 import time
 from CTA import CTA
+from dotenv import load_dotenv
 
 
 from datetime import datetime
@@ -16,13 +16,15 @@ def log(message):
 def build_message():
     set_timezone()
     log("Fetching CTA bus data...")
-    bus_data = CTA(os.environ["cta_bus_api_key"],
-                   os.environ["notify_stpid"].split(","),
-                   "",
-                   os.environ["notify_rt"].split(","),
-                   log=True).get_data()
+    bus_data = CTA(
+        os.getenv("CTA_BUS_API_KEY"),
+        os.getenv("NOTIFY_STPID").split(","),
+        "",
+        os.getenv("NOTIFY_RT").split(","),
+        log=True
+    ).get_data()
     if bus_data and len(bus_data) > 0:
-        msg = "Upcoming %s buses @ %s:\n" % (os.environ["notify_rt"],  os.environ["notify_stop_name"])
+        msg = "Upcoming %s buses @ %s:\n" % (os.getenv("NOTIFY_RT"), os.getenv("NOTIFY_STOP_NAME"))
     else:
         msg = "No upcoming buses\n"
     for bus in bus_data or []:
@@ -35,16 +37,7 @@ def build_message():
 
 def post_to_slack(msg):
     log("Posting message to Slack...")
-    return requests.post(os.environ['slack_webhook'], json={'text': msg})
-
-
-def load_secrets(secret_names):
-    # Load secrets (that would otherwise be set in the aws configuration)
-    f = open("../overlays/secrets.json")
-    secrets = json.load(f)
-    f.close()
-    for name in secret_names:
-        os.environ[name] = secrets[name]
+    return requests.post(os.getenv('BUS_SLACK_WEBHOOK'), json={'text': msg})
 
 
 def set_timezone():
@@ -53,9 +46,8 @@ def set_timezone():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     set_timezone()
     log("Starting BusNotifier...")
-    secret_names = ["slack_webhook", "cta_bus_api_key", "notify_rt", "notify_stop_name", "notify_stpid"]
-    load_secrets(secret_names)
     post_to_slack(build_message())
     log("Done.")
