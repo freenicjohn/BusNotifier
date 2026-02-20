@@ -1,0 +1,9 @@
+downloads/
+eggs/
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+.vscode/
+*.log
